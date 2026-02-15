@@ -1,0 +1,85 @@
+name: Validate Themes
+on:
+  push:
+    branches: [main]
+  pull_request:
+    branches: [main]
+
+jobs:
+  validate:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+
+      - name: Validate all theme files
+        run: |
+          #!/bin/bash
+          set -e
+
+          REQUIRED_FIELDS=(
+            "name"
+            "colors.background"
+            "colors.foreground"
+            "colors.surface"
+            "colors.overlay"
+            "colors.primary"
+            "colors.secondary"
+            "colors.accent"
+            "colors.success"
+            "colors.warning"
+            "colors.error"
+            "colors.info"
+            "colors.border"
+            "colors.border_focused"
+            "colors.status_bg"
+            "colors.status_fg"
+            "colors.input_bg"
+            "colors.input_fg"
+            "colors.input_cursor"
+            "colors.input_placeholder"
+          )
+
+          HEX_REGEX='^#[0-9a-fA-F]{6}$'
+          errors=0
+
+          for file in themes/*.toml; do
+            echo "Checking $file..."
+
+            # Check it's valid TOML
+            if ! python3 -c "import tomllib; tomllib.load(open('$file', 'rb'))" 2>/dev/null; then
+              echo "  ERROR: Invalid TOML syntax"
+              errors=$((errors + 1))
+              continue
+            fi
+
+            # Check required fields exist
+            for field in "${REQUIRED_FIELDS[@]}"; do
+              key="${field##*.}"
+              if ! grep -q "^${key}\s*=" "$file"; then
+                echo "  ERROR: Missing field '$key'"
+                errors=$((errors + 1))
+              fi
+            done
+
+            # Check color format (#rrggbb)
+            while IFS='=' read -r key value; do
+              key=$(echo "$key" | xargs)
+              value=$(echo "$value" | xargs | tr -d '"' | tr -d "'")
+              if [[ "$key" == "name" ]] || [[ -z "$value" ]] || [[ "$key" == \#* ]]; then
+                continue
+              fi
+              if [[ "$value" == \#* ]] && ! [[ "$value" =~ $HEX_REGEX ]]; then
+                echo "  ERROR: Invalid hex color for '$key': $value (expected #rrggbb)"
+                errors=$((errors + 1))
+              fi
+            done < <(grep -v '^\s*#' "$file" | grep -v '^\s*\[' | grep '=')
+          done
+
+          if [ $errors -gt 0 ]; then
+            echo ""
+            echo "Found $errors error(s)"
+            exit 1
+          fi
+
+          echo ""
+          echo "All themes valid!"
