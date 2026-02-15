@@ -1,0 +1,37 @@
+# Theme Name — Description of your theme
+# Copy this file to themes/your-theme-name.toml and fill in the colors.
+# All colors must be 6-digit hex format: #rrggbb
+
+name = "Your Theme Name"
+
+[colors]
+# Base — main backgrounds
+background = "#000000"       # Main app background
+foreground = "#ffffff"       # Default text color
+surface = "#111111"          # Elevated surfaces (popups, input)
+overlay = "#222222"          # Highlighted rows in menus
+
+# Accent — brand colors
+primary = "#ff00ff"          # Main accent (app name, headings)
+secondary = "#00ffff"        # Secondary accent
+accent = "#ffff00"           # Tertiary accent
+
+# Semantic — status indicators
+success = "#00ff00"          # Clean git, completed tasks
+warning = "#ffff00"          # Dirty git, context > 50%
+error = "#ff0000"            # Errors, context > 80%
+info = "#00ffff"             # Informational text
+
+# Border — panel borders
+border = "#333333"           # Unfocused borders
+border_focused = "#ff00ff"   # Focused border (matches primary)
+
+# Status bar — bottom bar
+status_bg = "#000000"        # Status bar background
+status_fg = "#888888"        # Status bar text
+
+# Input — text input area
+input_bg = "#111111"         # Input background
+input_fg = "#ffffff"         # Input text
+input_cursor = "#ffffff"     # Cursor color
+input_placeholder = "#555555" # Placeholder text
