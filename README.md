@@ -1,3 +1,5 @@
+![AI-assisted](https://img.shields.io/badge/built%20with-AI%20assistance-blue)
+
 # sexy-claude-themes
 
 Community theme store for [sexy-claude](https://github.com/MagnusPladsen/sexy-claude-code) (sc) — a beautiful terminal wrapper for Claude Code.
